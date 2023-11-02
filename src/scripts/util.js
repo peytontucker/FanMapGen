@@ -1,4 +1,5 @@
 //Code from Don Park via https://gist.github.com/donpark/1796361
+import { perlin2, seed } from './perlin.js'
 
 export function randomNoise(canvas, xOrigin, yOrigin, width, height, alpha) {
   xOrigin = xOrigin || 0
@@ -10,8 +11,8 @@ export function randomNoise(canvas, xOrigin, yOrigin, width, height, alpha) {
     //get the ImageData object that represents the underlying pixel data of an area of a <canvas> element.
     //The data property of an ImageData object contains a one-dimensional array, where each 4-element subsection
     // represents image data (RGBA) values for each pixel of the array
-    imageData = canvasContext.getImageData(xOrigin, yOrigin, width, height),
     random = Math.random,
+    imageData = canvasContext.getImageData(xOrigin, yOrigin, width, height),
     pixelData = imageData.data,
     pixelDataLength = pixelData.length,
     i = 0
@@ -26,25 +27,24 @@ export function randomNoise(canvas, xOrigin, yOrigin, width, height, alpha) {
   return canvas
 }
 
-export function perlinNoise(canvas, noise) {
-  const newCanvas = document.createElement('canvas')
+export function perlinNoise(canvas, scale) {
+  var ctx = canvas.getContext('2d')
 
-  newCanvas.width = canvas.width
-  newCanvas.height = canvas.height
+  seed(Math.random())
 
-  noise = noise || randomNoise(newCanvas)
-  var canvasContext = canvas.getContext('2d')
-  canvasContext.save()
+  var image = ctx.createImageData(canvas.width, canvas.height)
+  var data = image.data
 
-  /* Scale random iterations onto the canvas to generate Perlin noise. */
-  for (var size = 4; size <= noise.width; size *= 2) {
-    var x = (Math.random() * (noise.width - size)) | 0,
-      y = (Math.random() * (noise.height - size)) | 0
-    canvasContext.globalAlpha = 4 / size
+  for (var x = 0; x < canvas.width; x++) {
+    for (var y = 0; y < canvas.height; y++) {
+      var value = (perlin2(x / scale, y / scale) + 1) / 2.0
 
-    canvasContext.drawImage(noise, x, y, size, size, 0, 0, canvas.width, canvas.height)
+      value *= 256
+
+      var cell = (x + y * canvas.width) * 4
+      data[cell] = data[cell + 1] = data[cell + 2] = value
+      data[cell + 3] = 255 // alpha.
+    }
   }
-
-  canvasContext.restore()
-  return canvas
+  ctx.putImageData(image, 0, 0)
 }
