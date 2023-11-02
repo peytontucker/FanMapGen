@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 import { perlin2, seed } from './perlin.js'
 
 //Random Noise code from Don Park via https://gist.github.com/donpark/1796361
-export function randomNoise(canvas, xOrigin, yOrigin, width, height, alpha) {
+export function drawRandomNoise(canvas, xOrigin, yOrigin, width, height, alpha) {
   xOrigin = xOrigin || 0
   yOrigin = yOrigin || 0
   width = width || canvas.width
@@ -28,24 +29,32 @@ export function randomNoise(canvas, xOrigin, yOrigin, width, height, alpha) {
 }
 
 //Perlin Noise from Joseph Gentle https://github.com/josephg/noisejs
-export function perlinNoise(canvas, scale) {
-  var ctx = canvas.getContext('2d')
-
+export function createNoiseMap(mapWidth, mapHeight, scale) {
+  const noiseMap = [...Array(mapWidth)].map(() => Array(mapHeight))
   seed(Math.random())
 
-  var image = ctx.createImageData(canvas.width, canvas.height)
-  var data = image.data
-
-  for (var x = 0; x < canvas.width; x++) {
-    for (var y = 0; y < canvas.height; y++) {
-      var value = (perlin2(x / scale, y / scale) + 1) / 2.0
-
-      value *= 256
-
-      var cell = (x + y * canvas.width) * 4
-      data[cell] = data[cell + 1] = data[cell + 2] = value
-      data[cell + 3] = 255 // alpha.
+  for (var y = 0; y < mapHeight; y++) {
+    for (var x = 0; x < mapWidth; x++) {
+      var perlinValue = (perlin2(x / scale, y / scale) + 1) / 2.0
+      noiseMap[x][y] = perlinValue
     }
   }
-  ctx.putImageData(image, 0, 0)
+
+  return noiseMap
+}
+
+export function drawPerlinNoise(canvas, noiseMap) {
+  var canvasContext = canvas.getContext('2d')
+  var image = canvasContext.createImageData(canvas.width, canvas.height)
+  var data = image.data
+
+  for (var y = 0; y < canvas.height; y++) {
+    for (var x = 0; x < canvas.width; x++) {
+      let colorValue = noiseMap[x][y] * 256
+      var cell = (x + y * canvas.width) * 4
+      data[cell] = data[cell + 1] = data[cell + 2] = colorValue
+      data[cell + 3] = 255
+    }
+  }
+  canvasContext.putImageData(image, 0, 0)
 }

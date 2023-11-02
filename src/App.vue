@@ -1,15 +1,26 @@
 <script>
-import { perlinNoise, randomNoise } from '@/scripts/util.js'
+import { createNoiseMap, drawPerlinNoise, drawRandomNoise } from '@/scripts/util.js'
 
 export default {
   data() {
     return {
       canvasRef: null,
       dataUrl: null,
+
       mapWidth: 600,
       mapHeight: 600,
+      noiseParams: { scale: 50 },
+
       newWidth: 600,
-      newHeight: 600
+      newHeight: 600,
+      newNoiseParams: { scale: 50 }
+    }
+  },
+  computed: {
+    noiseParamsButtonIsDisabled() {
+      return Object.keys(this.newNoiseParams).every(
+        (key) => this.newNoiseParams[key] === this.noiseParams[key]
+      )
     }
   },
   mounted() {
@@ -17,12 +28,17 @@ export default {
   },
   methods: {
     generatePerlinNoise() {
-      perlinNoise(this.canvasRef, 50)
+      const noiseMap = createNoiseMap(
+        this.canvasRef.width,
+        this.canvasRef.height,
+        this.noiseParams.scale
+      )
+      drawPerlinNoise(this.canvasRef, noiseMap)
 
       this.populateDataUrl()
     },
     generateRandomNoise() {
-      randomNoise(this.canvasRef)
+      drawRandomNoise(this.canvasRef)
       this.populateDataUrl()
     },
     populateDataUrl() {
@@ -31,6 +47,9 @@ export default {
     updateMapDimensions() {
       this.mapWidth = this.newWidth
       this.mapHeight = this.newHeight
+    },
+    updateNoiseParams() {
+      this.noiseParams = { ...this.newNoiseParams }
     }
   }
 }
@@ -41,6 +60,18 @@ export default {
     <div class="header">Fantasy Map Generator</div>
     <div class="content-container">
       <div class="generation-params-container">
+        <div class="perlin-noise-params">
+          <label for="perlin-noise-scale">Scale:</label>
+          <input
+            v-model="newNoiseParams.scale"
+            id="perlin-noise-scale"
+            size="10"
+            inputmode="numeric"
+          />
+          <button :disabled="noiseParamsButtonIsDisabled" @click="updateNoiseParams">
+            Apply Changes
+          </button>
+        </div>
         <div class="map-dimensions-container">
           <label for="map-width-input">Map width:</label>
           <input v-model="newWidth" id="map-width-input" size="10" inputmode="numeric" />
@@ -51,7 +82,7 @@ export default {
             :disabled="newHeight === mapHeight && newWidth === mapWidth"
             @click="updateMapDimensions"
           >
-            Apply changes
+            Apply Changes
           </button>
         </div>
 
@@ -124,7 +155,7 @@ button:disabled {
   gap: 32px;
 }
 
-.map-dimensions-container {
+.generation-params-container * {
   display: flex;
   justify-content: center;
   align-items: center;
