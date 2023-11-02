@@ -1,6 +1,6 @@
-//Code from Don Park via https://gist.github.com/donpark/1796361
 import { perlin2, seed } from './perlin.js'
 
+//Random Noise code from Don Park via https://gist.github.com/donpark/1796361
 export function randomNoise(canvas, xOrigin, yOrigin, width, height, alpha) {
   xOrigin = xOrigin || 0
   yOrigin = yOrigin || 0
@@ -27,6 +27,7 @@ export function randomNoise(canvas, xOrigin, yOrigin, width, height, alpha) {
   return canvas
 }
 
+//Perlin Noise from Joseph Gentle https://github.com/josephg/noisejs
 export function perlinNoise(canvas, scale) {
   var ctx = canvas.getContext('2d')
 

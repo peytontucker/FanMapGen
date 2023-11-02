@@ -17,7 +17,7 @@ export default {
   },
   methods: {
     generatePerlinNoise() {
-      perlinNoise(this.canvasRef)
+      perlinNoise(this.canvasRef, 50)
 
       this.populateDataUrl()
     },
