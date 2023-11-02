@@ -1,5 +1,6 @@
+<!-- eslint-disable no-unused-vars -->
 <script>
-import { createNoiseMap, drawPerlinNoise, drawRandomNoise } from '@/scripts/util.js'
+import { createNoiseMap, drawPerlinNoise, drawRandomNoise, drawColorMap } from '@/scripts/util.js'
 
 export default {
   data() {
@@ -9,11 +10,11 @@ export default {
 
       mapWidth: 600,
       mapHeight: 600,
-      noiseParams: { scale: 50 },
+      noiseParams: { seed: 0.5, scale: 50, octaves: 4, persistance: 0.5, lacunarity: 2 },
 
       newWidth: 600,
       newHeight: 600,
-      newNoiseParams: { scale: 50 }
+      newNoiseParams: { seed: 0.5, scale: 50, octaves: 4, persistance: 0.5, lacunarity: 2 }
     }
   },
   computed: {
@@ -31,14 +32,26 @@ export default {
       const noiseMap = createNoiseMap(
         this.canvasRef.width,
         this.canvasRef.height,
-        this.noiseParams.scale
+        this.noiseParams.seed,
+        this.noiseParams.scale,
+        this.noiseParams.octaves,
+        this.noiseParams.persistance,
+        this.noiseParams.lacunarity
       )
       drawPerlinNoise(this.canvasRef, noiseMap)
-
       this.populateDataUrl()
     },
-    generateRandomNoise() {
-      drawRandomNoise(this.canvasRef)
+    generateColorMap() {
+      const noiseMap = createNoiseMap(
+        this.canvasRef.width,
+        this.canvasRef.height,
+        this.noiseParams.seed,
+        this.noiseParams.scale,
+        this.noiseParams.octaves,
+        this.noiseParams.persistance,
+        this.noiseParams.lacunarity
+      )
+      drawColorMap(this.canvasRef, noiseMap)
       this.populateDataUrl()
     },
     populateDataUrl() {
@@ -61,10 +74,38 @@ export default {
     <div class="content-container">
       <div class="generation-params-container">
         <div class="perlin-noise-params">
+          <label for="perlin-noise-seed">Seed:</label>
+          <input
+            v-model="newNoiseParams.seed"
+            id="perlin-noise-seed"
+            size="10"
+            inputmode="numeric"
+          />
           <label for="perlin-noise-scale">Scale:</label>
           <input
             v-model="newNoiseParams.scale"
             id="perlin-noise-scale"
+            size="10"
+            inputmode="numeric"
+          />
+          <label for="perlin-noise-octaves">Octaves:</label>
+          <input
+            v-model="newNoiseParams.octaves"
+            id="perlin-noise-octaves"
+            size="10"
+            inputmode="numeric"
+          />
+          <label for="perlin-noise-persistance">Persistance:</label>
+          <input
+            v-model="newNoiseParams.persistance"
+            id="perlin-noise-persistance"
+            size="10"
+            inputmode="numeric"
+          />
+          <label for="perlin-noise-lacunarity">Lacunarity:</label>
+          <input
+            v-model="newNoiseParams.lacunarity"
+            id="perlin-noise-lacunarity"
             size="10"
             inputmode="numeric"
           />
@@ -87,7 +128,7 @@ export default {
         </div>
 
         <button @click="generatePerlinNoise">Generate Perlin Noise</button>
-        <button @click="generateRandomNoise">Generate Random Noise</button>
+        <button @click="generateColorMap">Generate Color Map</button>
         <a :href="dataUrl" download="map">
           <button :disabled="!dataUrl">Download</button>
         </a>
