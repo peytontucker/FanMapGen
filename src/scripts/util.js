@@ -61,12 +61,11 @@ export function createNoiseMap(
         amplitude *= persistance
         frequency *= lacunarity
       }
-
       noiseMap[x][y] = (noiseHeight + 1) / 2
     }
   }
-
-  return noiseMap
+  const max = Math.max(...noiseMap.flat())
+  return noiseMap.map((row) => row.map((val) => val / max))
 }
 
 export function drawPerlinNoise(canvas, noiseMap) {
@@ -95,6 +94,7 @@ export function drawColorMap(canvas, noiseMap, terrainColorMap) {
   for (var y = 0; y < canvas.height; y++) {
     for (var x = 0; x < canvas.width; x++) {
       const heightValue = noiseMap[x][y]
+
       let colorRgbObject
 
       for (const [maxHeight, colorObject] of Object.entries(terrainColorMap).sort(
@@ -113,5 +113,7 @@ export function drawColorMap(canvas, noiseMap, terrainColorMap) {
       data[cell + 3] = 255
     }
   }
+
+  console.log('putting image data')
   canvasContext.putImageData(image, 0, 0)
 }

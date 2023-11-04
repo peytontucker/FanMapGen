@@ -3,7 +3,7 @@
     <div>
       <label for="perlin-noise-seed">Seed:</label>
       <input
-        v-model.number="parameters.find((param) => param.name === 'Seed').value"
+        v-model="newNoiseParams.seed"
         @input="emitNoiseParams"
         id="perlin-noise-seed"
         size="10"
@@ -17,11 +17,11 @@
         type="range"
         min="1"
         max="200"
-        v-model.number="parameters.find((param) => param.name === 'Scale').value"
+        v-model="newNoiseParams.scale"
         class="slider"
       />
       <input
-        v-model.number="parameters.find((param) => param.name === 'Scale').value"
+        v-model="newNoiseParams.scale"
         id="perlin-noise-scale"
         size="10"
         inputmode="numeric"
@@ -35,11 +35,11 @@
         type="range"
         min="1"
         max="10"
-        v-model.number="parameters.find((param) => param.name === 'Octaves').value"
+        v-model="newNoiseParams.octaves"
         class="slider"
       />
       <input
-        v-model.number="parameters.find((param) => param.name === 'Octaves').value"
+        v-model="newNoiseParams.octaves"
         @input="emitNoiseParams"
         id="perlin-noise-octaves"
         size="10"
@@ -54,11 +54,11 @@
         min="0"
         max="1"
         step="0.01"
-        v-model.number="parameters.find((param) => param.name === 'Persistance').value"
+        v-model.number="newNoiseParams.persistance"
         class="slider"
       />
       <input
-        v-model.number="parameters.find((param) => param.name === 'Persistance').value"
+        v-model.number="newNoiseParams.persistance"
         @input="emitNoiseParams"
         id="perlin-noise-persistance"
         size="10"
@@ -73,11 +73,11 @@
         min="1"
         max="5"
         step="0.1"
-        v-model.number="parameters.find((param) => param.name === 'Lacunarity').value"
+        v-model.number="newNoiseParams.lacunarity"
         class="slider"
       />
       <input
-        v-model.number="parameters.find((param) => param.name === 'Lacunarity').value"
+        v-model.number="newNoiseParams.lacunarity"
         @input="emitNoiseParams"
         id="perlin-noise-lacunarity"
         size="10"
@@ -107,13 +107,8 @@ export default {
     return {
       newWidth: 600,
       newHeight: 600,
-      parameters: [
-        { name: 'Seed', type: 'numeric', value: 17435 },
-        { name: 'Scale', type: 'slider', value: 100, min: 1, max: 1000 },
-        { name: 'Octaves', type: 'slider', value: 4, min: 1, max: 10 },
-        { name: 'Persistance', type: 'slider', value: 0.5, min: 0, max: 1 },
-        { name: 'Lacunarity', type: 'slider', value: 2, min: 1, max: 5 }
-      ]
+
+      newNoiseParams: { seed: 17345, scale: 100, octaves: 4, persistance: 0.5, lacunarity: 2 }
     }
   },
   computed: {
@@ -121,7 +116,6 @@ export default {
       return this.parameters.filter((parameter) => parameter.type === 'slider')
     },
     parameterValues() {
-      console.log(typeof this.parameters.find((p) => p.name === 'Lacunarity').value)
       const object = Object.fromEntries(
         this.parameters.map((parameter) => [parameter.name.toLowerCase(), parameter.value])
       )
@@ -133,7 +127,7 @@ export default {
       this.$emit('updateMapDimensionsEvent', { width: this.newWidth, height: this.newHeight })
     },
     emitNoiseParams() {
-      this.$emit('updateNoiseParamsEvent', this.parameterValues)
+      this.$emit('updateNoiseParamsEvent', this.newNoiseParams)
     }
   },
   emits: ['updateNoiseParamsEvent', 'updateMapDimensionsEvent']

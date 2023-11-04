@@ -18,13 +18,6 @@ export default {
   components: {
     GenerationParameters
   },
-  computed: {
-    noiseParamsButtonIsDisabled() {
-      return Object.keys(this.newNoiseParams).every(
-        (key) => this.newNoiseParams[key] === this.noiseParams[key]
-      )
-    }
-  },
   mounted() {
     this.canvasRef = this.$refs.canvasRef
   },
