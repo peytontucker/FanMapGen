@@ -10,18 +10,21 @@ export function drawRandomNoise(canvas, xOrigin, yOrigin, width, height, alpha) 
   height = height || canvas.height
   alpha = alpha || 255
   var canvasContext = canvas.getContext('2d'),
-    //get the ImageData object that represents the underlying pixel data of an area of a <canvas> element.
-    //The data property of an ImageData object contains a one-dimensional array, where each 4-element subsection
-    // represents image data (RGBA) values for each pixel of the array
+    //get the ImageData object that represents the underlying pixel data of an
+    //area of a <canvas> element. The data property of an ImageData object
+    //contains a one-dimensional array, where each 4-element subsection
+    //represents image data (RGBA) values for each pixel of the array
     random = Math.random,
     imageData = canvasContext.getImageData(xOrigin, yOrigin, width, height),
     pixelData = imageData.data,
     pixelDataLength = pixelData.length,
     i = 0
 
-  //Iterate through all pixel data, incrementing by four each time to adjust RGBA values. When
+  //Iterate through all pixel data, incrementing by four each time to adjust
+  //RGBA values. When
   while (i < pixelDataLength) {
-    //R = G = B = [random value between 0 and 255]. Alpha is either passed as an argument above or set to 255 in the absence of the argument.
+    //R = G = B = [random value between 0 and 255]. Alpha is either passed as an
+    //argument above or set to 255 in the absence of the argument.
     pixelData[i++] = pixelData[i++] = pixelData[i++] = (random() * 256) | 0
     pixelData[i++] = alpha
   }
@@ -83,7 +86,8 @@ export function drawPerlinNoise(canvas, noiseMap) {
   canvasContext.putImageData(image, 0, 0)
 }
 
-export function drawColorMap(canvas, noiseMap) {
+export function drawColorMap(canvas, noiseMap, terrainColorMap) {
+  console.log('called drawcolorMap')
   var canvasContext = canvas.getContext('2d')
   var image = canvasContext.createImageData(canvas.width, canvas.height)
   var data = image.data
@@ -93,16 +97,13 @@ export function drawColorMap(canvas, noiseMap) {
       const heightValue = noiseMap[x][y]
       let colorRgbObject
 
-      if (heightValue < 0.5) {
-        colorRgbObject = COLORS.BLUE
-      } else if (heightValue < 0.55) {
-        colorRgbObject = COLORS.SAND
-      } else if (heightValue < 0.8) {
-        colorRgbObject = COLORS.GREEN
-      } else if (heightValue < 0.95) {
-        colorRgbObject = COLORS.BROWN
-      } else {
-        colorRgbObject = COLORS.WHITE
+      for (const [maxHeight, colorObject] of Object.entries(terrainColorMap).sort(
+        (a, b) => a[0] - b[0]
+      )) {
+        if (heightValue <= maxHeight) {
+          colorRgbObject = colorObject
+          break
+        }
       }
 
       var cell = (x + y * canvas.width) * 4

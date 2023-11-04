@@ -1,7 +1,25 @@
 export const COLORS = {
-  BLUE: { red: 107, green: 60, blue: 243 },
-  GREEN: { red: 7, green: 245, blue: 129 },
+  BLUE: { red: 13, green: 35, blue: 200 },
+  GREEN: { red: 12, green: 140, blue: 14 },
+  DARK_GREEN: { red: 0, green: 100, blue: 0 },
   BROWN: { red: 133, green: 65, blue: 0 },
+  DARK_BROWN: { red: 44, green: 18, blue: 0 },
   WHITE: { red: 255, green: 255, blue: 255 },
-  SAND: { red: 239, green: 245, blue: 153 }
+  SAND: { red: 245, green: 235, blue: 153 },
+  LIGHT_SAND: { red: 245, green: 241, blue: 206 },
+  BLACK: { red: 0, green: 0, blue: 0 },
+  DARKER_GRAY: { red: 50, green: 50, blue: 50 },
+  DARK_GRAY: { red: 100, green: 100, blue: 100 },
+  GRAY: { red: 127, green: 127, blue: 127 },
+  LIGHT_GRAY: { red: 180, green: 180, blue: 180 },
+  LIGHTER_GRAY: { red: 230, green: 230, blue: 230 },
+  LIGHT_BROWN: { red: 183, green: 143, blue: 116 },
+  TAN: { red: 200, green: 109, blue: 47 },
+  RUST: { red: 205, green: 75, blue: 21 },
+  DARK_RUST: { red: 139, green: 52, blue: 15 },
+  LIGHT_TAN: { red: 237, green: 184, blue: 118 },
+  LIGHT_RUST: { red: 206, green: 100, blue: 61 },
+  RED_BROWN: { red: 202, green: 71, blue: 25 },
+  LIME: { red: 0, green: 255, blue: 0 },
+  LIGHT_GREEN: { red: 0, green: 200, blue: 0 }
 }

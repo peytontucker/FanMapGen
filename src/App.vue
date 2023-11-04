@@ -1,6 +1,8 @@
 <!-- eslint-disable no-unused-vars -->
 <script>
 import { createNoiseMap, drawPerlinNoise, drawRandomNoise, drawColorMap } from '@/scripts/util.js'
+import * as presets from './constants/terrainColorPresets'
+import GenerationParameters from './components/GenerationParameters.vue'
 
 export default {
   data() {
@@ -10,12 +12,11 @@ export default {
 
       mapWidth: 600,
       mapHeight: 600,
-      noiseParams: { seed: 0.5, scale: 50, octaves: 4, persistance: 0.5, lacunarity: 2 },
-
-      newWidth: 600,
-      newHeight: 600,
-      newNoiseParams: { seed: 0.5, scale: 50, octaves: 4, persistance: 0.5, lacunarity: 2 }
+      noiseParams: { seed: 17345, scale: 100, octaves: 4, persistance: 0.5, lacunarity: 2 }
     }
+  },
+  components: {
+    GenerationParameters
   },
   computed: {
     noiseParamsButtonIsDisabled() {
@@ -51,18 +52,18 @@ export default {
         this.noiseParams.persistance,
         this.noiseParams.lacunarity
       )
-      drawColorMap(this.canvasRef, noiseMap)
+      drawColorMap(this.canvasRef, noiseMap, presets.EARTH)
       this.populateDataUrl()
     },
     populateDataUrl() {
       this.dataUrl = this.canvasRef.toDataURL('image/png', 1)
     },
-    updateMapDimensions() {
-      this.mapWidth = this.newWidth
-      this.mapHeight = this.newHeight
+    updateNoiseParams(newNoiseParams) {
+      this.noiseParams = { ...newNoiseParams }
     },
-    updateNoiseParams() {
-      this.noiseParams = { ...this.newNoiseParams }
+    updateMapDimensions({ width, height }) {
+      this.mapWidth = width
+      this.mapHeight = height
     }
   }
 }
@@ -72,61 +73,11 @@ export default {
   <div class="page-container">
     <div class="header">Fantasy Map Generator</div>
     <div class="content-container">
-      <div class="generation-params-container">
-        <div class="perlin-noise-params">
-          <label for="perlin-noise-seed">Seed:</label>
-          <input
-            v-model="newNoiseParams.seed"
-            id="perlin-noise-seed"
-            size="10"
-            inputmode="numeric"
-          />
-          <label for="perlin-noise-scale">Scale:</label>
-          <input
-            v-model="newNoiseParams.scale"
-            id="perlin-noise-scale"
-            size="10"
-            inputmode="numeric"
-          />
-          <label for="perlin-noise-octaves">Octaves:</label>
-          <input
-            v-model="newNoiseParams.octaves"
-            id="perlin-noise-octaves"
-            size="10"
-            inputmode="numeric"
-          />
-          <label for="perlin-noise-persistance">Persistance:</label>
-          <input
-            v-model="newNoiseParams.persistance"
-            id="perlin-noise-persistance"
-            size="10"
-            inputmode="numeric"
-          />
-          <label for="perlin-noise-lacunarity">Lacunarity:</label>
-          <input
-            v-model="newNoiseParams.lacunarity"
-            id="perlin-noise-lacunarity"
-            size="10"
-            inputmode="numeric"
-          />
-          <button :disabled="noiseParamsButtonIsDisabled" @click="updateNoiseParams">
-            Apply Changes
-          </button>
-        </div>
-        <div class="map-dimensions-container">
-          <label for="map-width-input">Map width:</label>
-          <input v-model="newWidth" id="map-width-input" size="10" inputmode="numeric" />
-
-          <label for="map-height-input">Map height:</label>
-          <input v-model="newHeight" id="map-height-input" size="10" inputmode="numeric" />
-          <button
-            :disabled="newHeight === mapHeight && newWidth === mapWidth"
-            @click="updateMapDimensions"
-          >
-            Apply Changes
-          </button>
-        </div>
-
+      <div class="generation-ui-container">
+        <GenerationParameters
+          @updateNoiseParamsEvent="updateNoiseParams"
+          @updateMapDimensionsEvent="updateMapDimensions"
+        />
         <button @click="generatePerlinNoise">Generate Perlin Noise</button>
         <button @click="generateColorMap">Generate Color Map</button>
         <a :href="dataUrl" download="map">
@@ -178,14 +129,16 @@ button:disabled {
   flex: 1;
 }
 
-.map-container {
-  flex: 3;
+.content-container * {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
+  align-content: center;
+  gap: 16px;
 }
 
-.generation-params-container {
+.generation-ui-container {
   flex: 1;
   padding: 24px;
   flex-direction: column;
@@ -196,13 +149,11 @@ button:disabled {
   gap: 32px;
 }
 
-.generation-params-container * {
+.map-container {
+  flex: 3;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
-  align-content: center;
-  gap: 16px;
 }
 
 .header {
