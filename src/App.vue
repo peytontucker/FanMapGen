@@ -45,7 +45,7 @@ export default {
         this.noiseParams.persistance,
         this.noiseParams.lacunarity
       )
-      drawColorMap(this.canvasRef, noiseMap, presets.EARTH)
+      drawColorMap(this.canvasRef, noiseMap, presets.STANDARD)
       this.populateDataUrl()
     },
     populateDataUrl() {

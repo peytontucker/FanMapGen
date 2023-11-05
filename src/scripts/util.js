@@ -32,7 +32,6 @@ export function drawRandomNoise(canvas, xOrigin, yOrigin, width, height, alpha) 
   return canvas
 }
 
-//Perlin Noise from Joseph Gentle https://github.com/josephg/noisejs
 export function createNoiseMap(
   mapWidth,
   mapHeight,
@@ -44,13 +43,18 @@ export function createNoiseMap(
 ) {
   const noiseMap = [...Array(mapWidth)].map(() => Array(mapHeight))
 
+  //apply the given seed to the seed function
   seed(seedValue)
+
+  //generate noise map
   for (var y = 0; y < mapHeight; y++) {
     for (var x = 0; x < mapWidth; x++) {
       let amplitude = 1
       let frequency = 1
       let noiseHeight = 0
 
+      //for each octave, generate a perlin noise value and add it to total
+      //noiseHeight at that point
       for (let i = 0; i < octaves; i++) {
         let sampleX = (x / scale) * frequency
         let sampleY = (y / scale) * frequency
@@ -64,8 +68,26 @@ export function createNoiseMap(
       noiseMap[x][y] = (noiseHeight + 1) / 2
     }
   }
-  const max = Math.max(...noiseMap.flat())
-  return noiseMap.map((row) => row.map((val) => val / max))
+
+  //find max and min values in noise map
+  let min = Infinity
+  let max = -Infinity
+
+  for (let y = 0; y < mapHeight; y++) {
+    for (let x = 0; x < mapWidth; x++) {
+      const val = noiseMap[x][y]
+      if (val < min) {
+        min = val
+      }
+      if (val > max) {
+        max = val
+      }
+    }
+  }
+
+  //normalize values in map to be between 0 and 1.
+
+  return noiseMap.map((row) => row.map((val) => (val + min) / (max + min)))
 }
 
 export function drawPerlinNoise(canvas, noiseMap) {
