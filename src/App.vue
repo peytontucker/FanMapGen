@@ -57,14 +57,14 @@ export default {
     populateDataUrl() {
       this.dataUrl = this.canvasRef.toDataURL('image/png', 1)
     },
-    updateNoiseParams(newNoiseParams) {
-      this.generationParameters = { ...newNoiseParams }
+    updateNoiseParams(updatedParameter) {
+      this.generationParameters[updatedParameter.name.toLowerCase()] = updatedParameter.value
     },
     updateMapDimensions({ width, height }) {
       this.mapDimensions = { width, height }
     },
     updatePreset(preset) {
-      this.generationParameters.preset = preset
+      this.generationParameters.preset = { ...preset }
     }
   }
 }

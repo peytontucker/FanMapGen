@@ -1,34 +1,26 @@
 <template>
   <div>
     <label :for="'perlin-noise-' + name.toLowerCase()">{{ name }}:</label>
-    <input
-      @input="emitParamValue"
-      type="range"
-      :min="min"
-      :max="max"
-      :step="step || 1"
+    <select
       v-model.number="value"
-      class="slider"
-    />
-    <input
-      v-model.number="value"
+      @change="emitParamValue"
       :id="'perlin-noise-' + name.toLowerCase()"
-      size="10"
-      inputmode="numeric"
-      @input="emitNoiseParams"
-    />
+    >
+      <option disabled value="">Please select one</option>
+      <option v-for="preset in options" :value="preset.value" :key="preset">
+        {{ preset.text }}
+      </option>
+    </select>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'SliderParameter',
+  name: 'SelectParameter',
   props: {
     name: String,
     initialValue: Number,
-    min: Number,
-    max: Number,
-    step: Number
+    options: Array
   },
   data() {
     return {
@@ -38,7 +30,7 @@ export default {
   emits: ['emitParameterValue'],
   methods: {
     emitParamValue() {
-      this.$emit('emitParameterValue', { name: this.name, value: this.value })
+      this.$emit('emitParameterValue', this.value)
     }
   }
 }

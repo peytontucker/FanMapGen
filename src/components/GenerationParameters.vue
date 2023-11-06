@@ -1,24 +1,20 @@
 <template>
   <div class="container">
-    <div>
-      <label for="perlin-noise-seed">Seed:</label>
-      <input
-        v-model.number="parameters.find((parameter) => parameter.name === 'Seed').value"
-        @input="emitNoiseParams"
-        id="perlin-noise-seed"
-        size="10"
-        inputmode="numeric"
-      />
-    </div>
-    <div>
-      Preset:
-      <select v-model="presetParameter.value" @change="emitPreset">
-        <option disabled value="">Please select one</option>
-        <option v-for="preset in presetParameterOptions" :value="preset.value" :key="preset">
-          {{ preset.text }}
-        </option>
-      </select>
-    </div>
+    <NumericParameter
+      v-for="parameter in numericParameters"
+      :key="parameter.name"
+      :name="parameter.name"
+      :initial-value="parameter.value"
+      @emit-parameter-value="emitParameterValue"
+    />
+    <SelectParameter
+      v-for="parameter in selectParameters"
+      :key="parameter.name"
+      :name="parameter.name"
+      :initial-value="parameter.value"
+      :options="parameter.options"
+      @emit-parameter-value="emitPreset"
+    />
 
     <SliderParameter
       v-for="parameter in sliderParameters"
@@ -28,7 +24,7 @@
       :min="parameter.min"
       :max="parameter.max"
       :step="parameter.step"
-      @update-param-value="updateParameterValue"
+      @emit-parameter-value="emitParameterValue"
     />
 
     <div class="map-dimensions-container">
@@ -67,12 +63,15 @@
 <script>
 import { PRESETS } from '../constants/terrainColorPresets'
 import SliderParameter from './parameters/SliderParameter.vue'
+import NumericParameter from './parameters/NumericParameter.vue'
+import SelectParameter from './parameters/SelectParameter.vue'
 
 export default {
   name: 'GenerationParameters',
   components: {
-    // eslint-disable-next-line vue/no-unused-components
-    SliderParameter
+    SliderParameter,
+    NumericParameter,
+    SelectParameter
   },
   data() {
     return {
@@ -100,23 +99,11 @@ export default {
     sliderParameters() {
       return this.parameters.filter((parameter) => parameter.type === 'slider')
     },
-    parameterValues() {
-      return Object.fromEntries(
-        this.parameters.map((parameter) => [parameter.name.toLowerCase(), parameter.value])
-      )
+    numericParameters() {
+      return this.parameters.filter((parameter) => parameter.type === 'numeric')
     },
-    presetParameter() {
-      return this.parameters.find((parameter) => parameter.name === 'Preset')
-    },
-    presetParameterOptions() {
-      return this.parameters.find((parameter) => parameter.name === 'Preset').options
-    },
-    updateParameterValue() {
-      return (updatedParameter) => {
-        this.parameters.find((parameter) => parameter.name === updatedParameter.name).value =
-          updatedParameter.value
-        this.emitNoiseParams()
-      }
+    selectParameters() {
+      return this.parameters.filter((parameter) => parameter.type === 'select')
     }
   },
   methods: {
@@ -127,11 +114,14 @@ export default {
         height: this.newMapDimensions.height
       })
     },
-    emitNoiseParams() {
-      this.$emit('updateNoiseParamsEvent', this.parameterValues)
+    emitNoiseParams(updatedParameter) {
+      this.$emit('updateNoiseParamsEvent', updatedParameter)
     },
-    emitPreset() {
-      this.$emit('emitPreset', this.presetParameter.value)
+    emitPreset(value) {
+      this.$emit('emitPreset', value)
+    },
+    emitParameterValue(updatedParameter) {
+      this.emitNoiseParams(updatedParameter)
     }
   },
   emits: ['updateNoiseParamsEvent', 'updateMapDimensionsEvent', 'emitPreset']

@@ -118,7 +118,6 @@ export function drawColorMap(canvas, noiseMap, terrainColorMap) {
       const heightValue = noiseMap[x][y]
 
       let colorRgbObject
-
       for (const [maxHeight, colorObject] of sortedColorMapEntries) {
         if (heightValue <= maxHeight) {
           colorRgbObject = colorObject
