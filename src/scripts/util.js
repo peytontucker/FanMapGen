@@ -107,10 +107,11 @@ export function drawPerlinNoise(canvas, noiseMap) {
 }
 
 export function drawColorMap(canvas, noiseMap, terrainColorMap) {
-  console.log('called drawcolorMap')
   var canvasContext = canvas.getContext('2d')
   var image = canvasContext.createImageData(canvas.width, canvas.height)
   var data = image.data
+
+  const sortedColorMapEntries = Object.entries(terrainColorMap).sort((a, b) => a[0] - b[0])
 
   for (var y = 0; y < canvas.height; y++) {
     for (var x = 0; x < canvas.width; x++) {
@@ -118,9 +119,7 @@ export function drawColorMap(canvas, noiseMap, terrainColorMap) {
 
       let colorRgbObject
 
-      for (const [maxHeight, colorObject] of Object.entries(terrainColorMap).sort(
-        (a, b) => a[0] - b[0]
-      )) {
+      for (const [maxHeight, colorObject] of sortedColorMapEntries) {
         if (heightValue <= maxHeight) {
           colorRgbObject = colorObject
           break
@@ -135,6 +134,5 @@ export function drawColorMap(canvas, noiseMap, terrainColorMap) {
     }
   }
 
-  console.log('putting image data')
   canvasContext.putImageData(image, 0, 0)
 }

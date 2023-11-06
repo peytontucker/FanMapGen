@@ -183,7 +183,6 @@ export default {
       this.$emit('updateNoiseParamsEvent', this.parameterValues)
     },
     emitPreset() {
-      console.log(JSON.stringify(this.presetParameter.value, null, 2))
       this.$emit('emitPreset', this.presetParameter.value)
     }
   },
