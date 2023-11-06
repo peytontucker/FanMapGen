@@ -86,7 +86,6 @@ export function createNoiseMap(
   }
 
   //normalize values in map to be between 0 and 1.
-
   return noiseMap.map((row) => row.map((val) => (val - min) / (max - min)))
 }
 

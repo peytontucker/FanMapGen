@@ -11,6 +11,17 @@
       />
     </div>
     <div>
+      <div id="app">
+        Preset:
+        <select v-model="presetParameter.value" @change="emitPreset">
+          <option disabled value="">Please select one</option>
+          <option v-for="preset in presetParameterOptions" :value="preset.value" :key="preset">
+            {{ preset.text }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div>
       <label for="perlin-noise-scale">Scale:</label>
       <input
         @input="emitNoiseParams"
@@ -118,6 +129,8 @@
 </template>
 
 <script>
+import { PRESETS } from '../constants/terrainColorPresets'
+
 export default {
   name: 'GenerationParameters',
   data() {
@@ -126,6 +139,15 @@ export default {
 
       parameters: [
         { name: 'Seed', type: 'numeric', value: 17345 },
+        {
+          name: 'Preset',
+          type: 'select',
+          value: PRESETS.STANDARD,
+          options: Object.keys(PRESETS).map((preset) => ({
+            text: preset.charAt(0) + preset.toLowerCase().slice(1),
+            value: PRESETS[preset]
+          }))
+        },
         { name: 'Scale', type: 'slider', value: 100, min: 1, max: 200 },
         { name: 'Octaves', type: 'slider', value: 4, min: 1, max: 10 },
         { name: 'Persistance', type: 'slider', value: 0.5, min: 0, max: 1 },
@@ -141,6 +163,12 @@ export default {
       return Object.fromEntries(
         this.parameters.map((parameter) => [parameter.name.toLowerCase(), parameter.value])
       )
+    },
+    presetParameter() {
+      return this.parameters.find((parameter) => parameter.name === 'Preset')
+    },
+    presetParameterOptions() {
+      return this.parameters.find((parameter) => parameter.name === 'Preset').options
     }
   },
   methods: {
@@ -153,9 +181,13 @@ export default {
     },
     emitNoiseParams() {
       this.$emit('updateNoiseParamsEvent', this.parameterValues)
+    },
+    emitPreset() {
+      console.log(JSON.stringify(this.presetParameter.value, null, 2))
+      this.$emit('emitPreset', this.presetParameter.value)
     }
   },
-  emits: ['updateNoiseParamsEvent', 'updateMapDimensionsEvent']
+  emits: ['updateNoiseParamsEvent', 'updateMapDimensionsEvent', 'emitPreset']
 }
 </script>
 

@@ -1,7 +1,7 @@
 <!-- eslint-disable no-unused-vars -->
 <script>
 import { createNoiseMap, drawPerlinNoise, drawRandomNoise, drawColorMap } from '@/scripts/util.js'
-import * as presets from './constants/terrainColorPresets'
+import { PRESETS } from './constants/terrainColorPresets'
 import GenerationParameters from './components/GenerationParameters.vue'
 
 export default {
@@ -11,7 +11,14 @@ export default {
       dataUrl: null,
 
       mapDimensions: { width: 600, height: 600 },
-      noiseParams: { seed: 17345, scale: 100, octaves: 4, persistance: 0.5, lacunarity: 2 }
+      generationParameters: {
+        seed: 17345,
+        scale: 100,
+        octaves: 4,
+        persistance: 0.5,
+        lacunarity: 2,
+        preset: PRESETS.STANDARD
+      }
     }
   },
   components: {
@@ -25,11 +32,11 @@ export default {
       const noiseMap = createNoiseMap(
         this.canvasRef.width,
         this.canvasRef.height,
-        this.noiseParams.seed,
-        this.noiseParams.scale,
-        this.noiseParams.octaves,
-        this.noiseParams.persistance,
-        this.noiseParams.lacunarity
+        this.generationParameters.seed,
+        this.generationParameters.scale,
+        this.generationParameters.octaves,
+        this.generationParameters.persistance,
+        this.generationParameters.lacunarity
       )
       drawPerlinNoise(this.canvasRef, noiseMap)
       this.populateDataUrl()
@@ -38,23 +45,26 @@ export default {
       const noiseMap = createNoiseMap(
         this.canvasRef.width,
         this.canvasRef.height,
-        this.noiseParams.seed,
-        this.noiseParams.scale,
-        this.noiseParams.octaves,
-        this.noiseParams.persistance,
-        this.noiseParams.lacunarity
+        this.generationParameters.seed,
+        this.generationParameters.scale,
+        this.generationParameters.octaves,
+        this.generationParameters.persistance,
+        this.generationParameters.lacunarity
       )
-      drawColorMap(this.canvasRef, noiseMap, presets.STANDARD)
+      drawColorMap(this.canvasRef, noiseMap, this.generationParameters.preset)
       this.populateDataUrl()
     },
     populateDataUrl() {
       this.dataUrl = this.canvasRef.toDataURL('image/png', 1)
     },
     updateNoiseParams(newNoiseParams) {
-      this.noiseParams = { ...newNoiseParams }
+      this.generationParameters = { ...newNoiseParams }
     },
     updateMapDimensions({ width, height }) {
       this.mapDimensions = { width, height }
+    },
+    updatePreset(preset) {
+      this.generationParameters.preset = preset
     }
   }
 }
@@ -68,6 +78,7 @@ export default {
         <GenerationParameters
           @updateNoiseParamsEvent="updateNoiseParams"
           @updateMapDimensionsEvent="updateMapDimensions"
+          @emitPreset="updatePreset"
         />
         <button @click="generatePerlinNoise">Generate Perlin Noise</button>
         <button @click="generateColorMap">Generate Color Map</button>
