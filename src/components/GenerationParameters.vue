@@ -11,47 +11,23 @@
       />
     </div>
     <div>
-      <div>
-        Preset:
-        <select v-model="presetParameter.value" @change="emitPreset">
-          <option disabled value="">Please select one</option>
-          <option v-for="preset in presetParameterOptions" :value="preset.value" :key="preset">
-            {{ preset.text }}
-          </option>
-        </select>
-      </div>
+      Preset:
+      <select v-model="presetParameter.value" @change="emitPreset">
+        <option disabled value="">Please select one</option>
+        <option v-for="preset in presetParameterOptions" :value="preset.value" :key="preset">
+          {{ preset.text }}
+        </option>
+      </select>
     </div>
-    <SliderParameter
-      name="Scale"
-      initial-value="100"
-      min="0"
-      max="200"
-      @updateParamValue="updateParameterValue"
-    />
 
     <SliderParameter
-      name="Octaves"
-      initial-value="4"
-      min="1"
-      max="10"
-      @updateParamValue="updateParameterValue"
-    />
-
-    <SliderParameter
-      name="Persistance"
-      initial-value="0.5"
-      min="0"
-      max="1"
-      step="0.01"
-      @update-param-value="updateParameterValue"
-    />
-
-    <SliderParameter
-      name="Lacunarity"
-      initial-value="2"
-      min="1"
-      max="5"
-      step="0.1"
+      v-for="parameter in sliderParameters"
+      :key="parameter.name"
+      :name="parameter.name"
+      :initial-value="parameter.value"
+      :min="parameter.min"
+      :max="parameter.max"
+      :step="parameter.step"
       @update-param-value="updateParameterValue"
     />
 
@@ -90,7 +66,7 @@
 
 <script>
 import { PRESETS } from '../constants/terrainColorPresets'
-import SliderParameter from './SliderParameter.vue'
+import SliderParameter from './parameters/SliderParameter.vue'
 
 export default {
   name: 'GenerationParameters',
@@ -115,8 +91,8 @@ export default {
         },
         { name: 'Scale', type: 'slider', value: 100, min: 1, max: 200 },
         { name: 'Octaves', type: 'slider', value: 4, min: 1, max: 10 },
-        { name: 'Persistance', type: 'slider', value: 0.5, min: 0, max: 1 },
-        { name: 'Lacunarity', type: 'slider', value: 2, min: 1, max: 5 }
+        { name: 'Persistance', type: 'slider', value: 0.5, min: 0, max: 1, step: 0.01 },
+        { name: 'Lacunarity', type: 'slider', value: 2, min: 1, max: 5, step: 0.1 }
       ]
     }
   },

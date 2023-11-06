@@ -12,7 +12,7 @@
     />
     <input
       v-model.number="value"
-      id="perlin-noise-scale"
+      :id="'perlin-noise-' + name.toLowerCase()"
       size="10"
       inputmode="numeric"
       @input="emitNoiseParams"
@@ -44,24 +44,4 @@ export default {
 }
 </script>
 
-<style scoped>
-.container {
-  flex: 1;
-  padding: 24px;
-  flex-direction: column;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #eee;
-  gap: 32px;
-}
-.container * {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  align-content: center;
-  gap: 16px;
-}
-</style>
+<style scoped></style>
