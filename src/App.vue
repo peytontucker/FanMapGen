@@ -164,7 +164,8 @@ button:disabled {
 }
 
 .header {
-  background-color: darkslategray;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),
+    url('./assets/header_background.png');
 }
 
 .header,
