@@ -1,6 +1,6 @@
 <!-- eslint-disable no-unused-vars -->
 <script>
-import { createNoiseMap, drawPerlinNoise, drawRandomNoise, drawColorMap } from '@/scripts/util.js'
+import { createNoiseMap, drawPerlinNoise, drawColorMap } from '@/scripts/util.js'
 import { PRESETS } from './constants/terrainColorPresets'
 import GenerationParameters from './components/GenerationParameters.vue'
 

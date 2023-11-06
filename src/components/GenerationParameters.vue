@@ -11,7 +11,7 @@
       />
     </div>
     <div>
-      <div id="app">
+      <div>
         Preset:
         <select v-model="presetParameter.value" @change="emitPreset">
           <option disabled value="">Please select one</option>
@@ -21,80 +21,40 @@
         </select>
       </div>
     </div>
-    <div>
-      <label for="perlin-noise-scale">Scale:</label>
-      <input
-        @input="emitNoiseParams"
-        type="range"
-        min="1"
-        max="200"
-        v-model.number="parameters.find((parameter) => parameter.name === 'Scale').value"
-        class="slider"
-      />
-      <input
-        v-model.number="parameters.find((parameter) => parameter.name === 'Scale').value"
-        id="perlin-noise-scale"
-        size="10"
-        inputmode="numeric"
-        @input="emitNoiseParams"
-      />
-    </div>
-    <div>
-      <label for="perlin-noise-octaves">Octaves:</label>
-      <input
-        @input="emitNoiseParams"
-        type="range"
-        min="1"
-        max="10"
-        v-model.number="parameters.find((parameter) => parameter.name === 'Octaves').value"
-        class="slider"
-      />
-      <input
-        v-model.number="parameters.find((parameter) => parameter.name === 'Octaves').value"
-        @input="emitNoiseParams"
-        id="perlin-noise-octaves"
-        size="10"
-        inputmode="numeric"
-      />
-    </div>
-    <div>
-      <label for="perlin-noise-persistance">Persistance:</label>
-      <input
-        @input="emitNoiseParams"
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        v-model.number="parameters.find((parameter) => parameter.name === 'Persistance').value"
-        class="slider"
-      />
-      <input
-        v-model.number="parameters.find((parameter) => parameter.name === 'Persistance').value"
-        @input="emitNoiseParams"
-        id="perlin-noise-persistance"
-        size="10"
-        inputmode="numeric"
-      />
-    </div>
-    <div>
-      <label for="perlin-noise-lacunarity">Lacunarity:</label>
-      <input
-        @input="emitNoiseParams"
-        type="range"
-        min="1"
-        max="5"
-        step="0.1"
-        v-model.number="parameters.find((parameter) => parameter.name === 'Lacunarity').value"
-        class="slider"
-      />
-      <input
-        v-model.number="parameters.find((parameter) => parameter.name === 'Lacunarity').value"
-        @input="emitNoiseParams"
-        id="perlin-noise-lacunarity"
-        size="10"
-        inputmode="numeric"
-      />
-    </div>
+    <SliderParameter
+      name="Scale"
+      initial-value="100"
+      min="0"
+      max="200"
+      @updateParamValue="updateParameterValue"
+    />
+
+    <SliderParameter
+      name="Octaves"
+      initial-value="4"
+      min="1"
+      max="10"
+      @updateParamValue="updateParameterValue"
+    />
+
+    <SliderParameter
+      name="Persistance"
+      initial-value="0.5"
+      min="0"
+      max="1"
+      step="0.01"
+      @update-param-value="updateParameterValue"
+    />
+
+    <SliderParameter
+      name="Lacunarity"
+      initial-value="2"
+      min="1"
+      max="5"
+      step="0.1"
+      @update-param-value="updateParameterValue"
+    />
+
     <div class="map-dimensions-container">
       <label for="map-width-input">Map width:</label>
       <input
@@ -130,9 +90,14 @@
 
 <script>
 import { PRESETS } from '../constants/terrainColorPresets'
+import SliderParameter from './SliderParameter.vue'
 
 export default {
   name: 'GenerationParameters',
+  components: {
+    // eslint-disable-next-line vue/no-unused-components
+    SliderParameter
+  },
   data() {
     return {
       newMapDimensions: { width: 600, height: 600, changed: false },
@@ -169,6 +134,13 @@ export default {
     },
     presetParameterOptions() {
       return this.parameters.find((parameter) => parameter.name === 'Preset').options
+    },
+    updateParameterValue() {
+      return (updatedParameter) => {
+        this.parameters.find((parameter) => parameter.name === updatedParameter.name).value =
+          updatedParameter.value
+        this.emitNoiseParams()
+      }
     }
   },
   methods: {
@@ -190,7 +162,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .container {
   flex: 1;
   padding: 24px;

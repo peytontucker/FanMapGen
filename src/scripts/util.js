@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import { perlin2, seed } from './perlin.js'
-import { COLORS } from '../constants/colors.js'
 
 //Random Noise code from Don Park via https://gist.github.com/donpark/1796361
 export function drawRandomNoise(canvas, xOrigin, yOrigin, width, height, alpha) {
@@ -9,7 +8,7 @@ export function drawRandomNoise(canvas, xOrigin, yOrigin, width, height, alpha) 
   width = width || canvas.width
   height = height || canvas.height
   alpha = alpha || 255
-  var canvasContext = canvas.getContext('2d'),
+  const canvasContext = canvas.getContext('2d'),
     //get the ImageData object that represents the underlying pixel data of an
     //area of a <canvas> element. The data property of an ImageData object
     //contains a one-dimensional array, where each 4-element subsection
@@ -17,8 +16,9 @@ export function drawRandomNoise(canvas, xOrigin, yOrigin, width, height, alpha) 
     random = Math.random,
     imageData = canvasContext.getImageData(xOrigin, yOrigin, width, height),
     pixelData = imageData.data,
-    pixelDataLength = pixelData.length,
-    i = 0
+    pixelDataLength = pixelData.length
+
+  let i = 0
 
   //Iterate through all pixel data, incrementing by four each time to adjust
   //RGBA values. When
@@ -47,8 +47,8 @@ export function createNoiseMap(
   seed(seedValue)
 
   //generate noise map
-  for (var y = 0; y < mapHeight; y++) {
-    for (var x = 0; x < mapWidth; x++) {
+  for (let y = 0; y < mapHeight; y++) {
+    for (let x = 0; x < mapWidth; x++) {
       let amplitude = 1
       let frequency = 1
       let noiseHeight = 0
@@ -56,10 +56,10 @@ export function createNoiseMap(
       //for each octave, generate a perlin noise value and add it to total
       //noiseHeight at that point
       for (let i = 0; i < octaves; i++) {
-        let sampleX = (x / scale) * frequency
-        let sampleY = (y / scale) * frequency
+        const sampleX = (x / scale) * frequency
+        const sampleY = (y / scale) * frequency
 
-        var perlinValue = perlin2(sampleX, sampleY)
+        const perlinValue = perlin2(sampleX, sampleY)
         noiseHeight += perlinValue * amplitude
 
         amplitude *= persistance
@@ -90,15 +90,15 @@ export function createNoiseMap(
 }
 
 export function drawPerlinNoise(canvas, noiseMap) {
-  var canvasContext = canvas.getContext('2d')
+  const canvasContext = canvas.getContext('2d')
 
-  var image = canvasContext.createImageData(canvas.width, canvas.height)
-  var data = image.data
+  const image = canvasContext.createImageData(canvas.width, canvas.height)
+  const data = image.data
 
-  for (var y = 0; y < canvas.height; y++) {
-    for (var x = 0; x < canvas.width; x++) {
+  for (let y = 0; y < canvas.height; y++) {
+    for (let x = 0; x < canvas.width; x++) {
       let colorValue = noiseMap[x][y] * 256
-      var cell = (x + y * canvas.width) * 4
+      const cell = (x + y * canvas.width) * 4
       data[cell] = data[cell + 1] = data[cell + 2] = colorValue
       data[cell + 3] = 255
     }
@@ -107,14 +107,14 @@ export function drawPerlinNoise(canvas, noiseMap) {
 }
 
 export function drawColorMap(canvas, noiseMap, terrainColorMap) {
-  var canvasContext = canvas.getContext('2d')
-  var image = canvasContext.createImageData(canvas.width, canvas.height)
-  var data = image.data
+  const canvasContext = canvas.getContext('2d')
+  const image = canvasContext.createImageData(canvas.width, canvas.height)
+  const data = image.data
 
   const sortedColorMapEntries = Object.entries(terrainColorMap).sort((a, b) => a[0] - b[0])
 
-  for (var y = 0; y < canvas.height; y++) {
-    for (var x = 0; x < canvas.width; x++) {
+  for (let y = 0; y < canvas.height; y++) {
+    for (let x = 0; x < canvas.width; x++) {
       const heightValue = noiseMap[x][y]
 
       let colorRgbObject
