@@ -10,8 +10,7 @@ export default {
       canvasRef: null,
       dataUrl: null,
 
-      mapWidth: 600,
-      mapHeight: 600,
+      mapDimensions: { width: 600, height: 600 },
       noiseParams: { seed: 17345, scale: 100, octaves: 4, persistance: 0.5, lacunarity: 2 }
     }
   },
@@ -55,8 +54,7 @@ export default {
       this.noiseParams = { ...newNoiseParams }
     },
     updateMapDimensions({ width, height }) {
-      this.mapWidth = width
-      this.mapHeight = height
+      this.mapDimensions = { width, height }
     }
   }
 }
@@ -78,7 +76,12 @@ export default {
         </a>
       </div>
       <div class="map-container">
-        <canvas id="map" ref="canvasRef" :width="mapWidth" :height="mapHeight"></canvas>
+        <canvas
+          id="map"
+          ref="canvasRef"
+          :width="mapDimensions.width"
+          :height="mapDimensions.height"
+        ></canvas>
       </div>
     </div>
     <div class="footer"></div>

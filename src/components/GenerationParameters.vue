@@ -86,14 +86,31 @@
     </div>
     <div class="map-dimensions-container">
       <label for="map-width-input">Map width:</label>
-      <input v-model.number="newWidth" id="map-width-input" size="10" inputmode="numeric" />
+      <input
+        v-model.number="newMapDimensions.width"
+        @input="
+          () => {
+            newMapDimensions.changed = true
+          }
+        "
+        id="map-width-input"
+        size="10"
+        inputmode="numeric"
+      />
 
       <label for="map-height-input">Map height:</label>
-      <input v-model.number="newHeight" id="map-height-input" size="10" inputmode="numeric" />
-      <button
-        :disabled="newHeight === mapHeight && newWidth === mapWidth"
-        @click="emitMapDimensions"
-      >
+      <input
+        v-model.number="newMapDimensions.height"
+        @input="
+          () => {
+            newMapDimensions.changed = true
+          }
+        "
+        id="map-height-input"
+        size="10"
+        inputmode="numeric"
+      />
+      <button :disabled="!newMapDimensions.changed" @click="emitMapDimensionsAndToggleChanged">
         Apply Changes
       </button>
     </div>
@@ -105,8 +122,7 @@ export default {
   name: 'GenerationParameters',
   data() {
     return {
-      newWidth: 600,
-      newHeight: 600,
+      newMapDimensions: { width: 600, height: 600, changed: false },
 
       parameters: [
         { name: 'Seed', type: 'numeric', value: 17345 },
@@ -122,15 +138,18 @@ export default {
       return this.parameters.filter((parameter) => parameter.type === 'slider')
     },
     parameterValues() {
-      const object = Object.fromEntries(
+      return Object.fromEntries(
         this.parameters.map((parameter) => [parameter.name.toLowerCase(), parameter.value])
       )
-      return object
     }
   },
   methods: {
-    emitMapDimensions() {
-      this.$emit('updateMapDimensionsEvent', { width: this.newWidth, height: this.newHeight })
+    emitMapDimensionsAndToggleChanged() {
+      this.newMapDimensions.changed = false
+      this.$emit('updateMapDimensionsEvent', {
+        width: this.newMapDimensions.width,
+        height: this.newMapDimensions.height
+      })
     },
     emitNoiseParams() {
       this.$emit('updateNoiseParamsEvent', this.parameterValues)
