@@ -1,35 +1,10 @@
-#  FanMapGen
+# FanMapGen
 
-This template should help get you started developing with Vue 3 in Vite.
+A fast, powerful, in-browser map generator that gives you fine-tuned control
+over generation parameters. FanMapGen is intuitive enough for basic usage, but
+grants users the opportunity to tweak generation to their liking.
 
-## Recommended IDE Setup
+Choose between different presets to fit your needs, or create your own with the
+custom preset editor.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+Built entirely in Vue with usage of perlin noise and HTML's canvas element.
