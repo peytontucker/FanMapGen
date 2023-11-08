@@ -39,7 +39,9 @@ export function createNoiseMap(
   scale,
   octaves,
   persistance,
-  lacunarity
+  lacunarity,
+  offsetX,
+  offsetY
 ) {
   const noiseMap = [...Array(mapWidth)].map(() => Array(mapHeight))
 
@@ -56,8 +58,8 @@ export function createNoiseMap(
       //for each octave, generate a perlin noise value and add it to total
       //noiseHeight at that point
       for (let i = 0; i < octaves; i++) {
-        const sampleX = (x / scale) * frequency
-        const sampleY = (y / scale) * frequency
+        const sampleX = ((x + offsetX) / scale) * frequency
+        const sampleY = ((y + offsetY) / scale) * frequency
 
         const perlinValue = perlin2(sampleX, sampleY)
         noiseHeight += perlinValue * amplitude

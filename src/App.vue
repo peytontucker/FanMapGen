@@ -1,74 +1,4 @@
 <!-- eslint-disable no-unused-vars -->
-<script>
-import { createNoiseMap, drawPerlinNoise, drawColorMap } from '@/scripts/util.js'
-import { PRESETS } from './constants/terrainColorPresets'
-import GenerationParameters from './components/GenerationParameters.vue'
-
-export default {
-  data() {
-    return {
-      canvasRef: null,
-      dataUrl: null,
-
-      mapDimensions: { width: 600, height: 600 },
-      generationParameters: {
-        seed: 17345,
-        scale: 100,
-        octaves: 4,
-        persistance: 0.5,
-        lacunarity: 2,
-        preset: PRESETS.STANDARD
-      }
-    }
-  },
-  components: {
-    GenerationParameters
-  },
-  mounted() {
-    this.canvasRef = this.$refs.canvasRef
-  },
-  methods: {
-    generatePerlinNoise() {
-      const noiseMap = createNoiseMap(
-        this.canvasRef.width,
-        this.canvasRef.height,
-        this.generationParameters.seed,
-        this.generationParameters.scale,
-        this.generationParameters.octaves,
-        this.generationParameters.persistance,
-        this.generationParameters.lacunarity
-      )
-      drawPerlinNoise(this.canvasRef, noiseMap)
-      this.populateDataUrl()
-    },
-    generateColorMap() {
-      const noiseMap = createNoiseMap(
-        this.canvasRef.width,
-        this.canvasRef.height,
-        this.generationParameters.seed,
-        this.generationParameters.scale,
-        this.generationParameters.octaves,
-        this.generationParameters.persistance,
-        this.generationParameters.lacunarity
-      )
-      drawColorMap(this.canvasRef, noiseMap, this.generationParameters.preset)
-      this.populateDataUrl()
-    },
-    populateDataUrl() {
-      this.dataUrl = this.canvasRef.toDataURL('image/png', 1)
-    },
-    updateNoiseParams(updatedParameter) {
-      this.generationParameters[updatedParameter.name.toLowerCase()] = updatedParameter.value
-    },
-    updateMapDimensions({ width, height }) {
-      this.mapDimensions = { width, height }
-    },
-    updatePreset(preset) {
-      this.generationParameters.preset = { ...preset }
-    }
-  }
-}
-</script>
 
 <template>
   <div class="page-container">
@@ -93,11 +23,118 @@ export default {
           :width="mapDimensions.width"
           :height="mapDimensions.height"
         ></canvas>
+        <div class="scroll-container">
+          <div class="scroll-buttons-container">
+            <button @click="() => changeVerticalOffset(-1)">Up</button>
+            <div>
+              <button @click="() => changeHorizontalOffset(-1)">Left</button>
+              <button @click="() => changeHorizontalOffset(1)">Right</button>
+            </div>
+            <button @click="() => changeVerticalOffset(1)">Down</button>
+          </div>
+          <SliderParameter
+            name="Scroll Amount"
+            :initialValue="1"
+            :min="1"
+            :max="50"
+            @emitParameterValue="(newStep) => (offsetStep = newStep.value)"
+          />
+        </div>
       </div>
     </div>
     <div class="footer"></div>
   </div>
 </template>
+
+<script>
+import { createNoiseMap, drawPerlinNoise, drawColorMap } from '@/scripts/util.js'
+import { PRESETS } from './constants/terrainColorPresets'
+import GenerationParameters from './components/GenerationParameters.vue'
+import SliderParameter from './components/parameters/SliderParameter.vue'
+
+export default {
+  data() {
+    return {
+      canvasRef: null,
+      dataUrl: null,
+
+      mapDimensions: { width: 600, height: 600 },
+      generationParameters: {
+        seed: 17345,
+        scale: 100,
+        octaves: 4,
+        persistance: 0.5,
+        lacunarity: 2,
+        preset: PRESETS.STANDARD
+      },
+
+      offsetX: 0,
+      offsetY: 0,
+      offsetStep: 1
+    }
+  },
+  components: {
+    GenerationParameters,
+    SliderParameter
+  },
+  mounted() {
+    this.canvasRef = this.$refs.canvasRef
+  },
+  methods: {
+    generatePerlinNoise() {
+      const noiseMap = createNoiseMap(
+        this.canvasRef.width,
+        this.canvasRef.height,
+        this.generationParameters.seed,
+        this.generationParameters.scale,
+        this.generationParameters.octaves,
+        this.generationParameters.persistance,
+        this.generationParameters.lacunarity,
+        this.offsetX,
+        this.offsetY
+      )
+      drawPerlinNoise(this.canvasRef, noiseMap)
+      this.populateDataUrl()
+    },
+    generateColorMap() {
+      const noiseMap = createNoiseMap(
+        this.canvasRef.width,
+        this.canvasRef.height,
+        this.generationParameters.seed,
+        this.generationParameters.scale,
+        this.generationParameters.octaves,
+        this.generationParameters.persistance,
+        this.generationParameters.lacunarity,
+        this.offsetX,
+        this.offsetY
+      )
+      drawColorMap(this.canvasRef, noiseMap, this.generationParameters.preset)
+      this.populateDataUrl()
+    },
+
+    changeHorizontalOffset(directionValue) {
+      this.offsetX += directionValue * this.offsetStep
+      this.generateColorMap()
+    },
+    changeVerticalOffset(directionValue) {
+      this.offsetY += directionValue * this.offsetStep
+      this.generateColorMap()
+    },
+    populateDataUrl() {
+      this.dataUrl = this.canvasRef.toDataURL('image/png', 1)
+    },
+    updateNoiseParams(updatedParameter) {
+      this.generationParameters[updatedParameter.name.toLowerCase()] = updatedParameter.value
+    },
+    updateMapDimensions({ width, height }) {
+      this.mapDimensions = { width, height }
+    },
+    updatePreset(preset) {
+      this.generationParameters.preset = { ...preset }
+    }
+  }
+}
+</script>
 
 <style>
 * {
@@ -158,9 +195,21 @@ button:disabled {
 
 .map-container {
   flex: 3;
+  flex-direction: column;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 16px;
+}
+
+.scroll-container {
+  display: flex;
+}
+
+.scroll-buttons-container {
+  display: flex;
+  flex-direction: column;
+  margin: 8px;
 }
 
 .header {
