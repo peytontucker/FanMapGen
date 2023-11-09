@@ -6,7 +6,7 @@
     <div class="content-container">
       <div class="generation-ui-container">
         <GenerationParameters
-          @updateNoiseParamsEvent="updateNoiseParams"
+          @updateParamValueEvent="updateNoiseParams"
           @updateMapDimensionsEvent="updateMapDimensions"
           @emitPreset="updatePreset"
         />
@@ -25,12 +25,12 @@
         ></canvas>
         <div class="scroll-container">
           <div class="scroll-buttons-container">
-            <button @click="() => changeVerticalOffset(-1.0)">Up</button>
+            <button @click="() => changeVerticalOffset(-1.0)">▲</button>
             <div>
-              <button @click="() => changeHorizontalOffset(-1.0)">Left</button>
-              <button @click="() => changeHorizontalOffset(1.0)">Right</button>
+              <button @click="() => changeHorizontalOffset(-1.0)">◀</button>
+              <button @click="() => changeHorizontalOffset(1.0)">▶</button>
             </div>
-            <button @click="() => changeVerticalOffset(1.0)">Down</button>
+            <button @click="() => changeVerticalOffset(1.0)">▼</button>
           </div>
           <SliderParameter
             name="Scroll Amount"
@@ -138,13 +138,6 @@ export default {
 </script>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  font-family: 'Courier New', Courier, monospace;
-  color: black;
-}
-
 button {
   padding: 8px 16px;
   font-size: 24px;
@@ -152,10 +145,19 @@ button {
   color: black;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Courier New', Courier, monospace;
+  color: black;
+}
+
 button:disabled {
   opacity: 0.4;
 }
+</style>
 
+<style scoped>
 #map {
   border: solid lightslategray 1px;
   margin: 8px;
@@ -211,6 +213,7 @@ button:disabled {
   display: flex;
   flex-direction: column;
   margin: 8px;
+  padding: 16px;
 }
 
 .header {

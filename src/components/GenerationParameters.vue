@@ -1,14 +1,14 @@
 <template>
   <div class="container">
     <NumericParameter
-      v-for="parameter in filterParameters('numeric', showAdvancedParameters)"
+      v-for="parameter in filterParameters('numeric')"
       :key="parameter.name"
       :name="parameter.name"
       :initial-value="parameter.value"
       @emit-parameter-value="emitParameterValue"
     />
     <SelectParameter
-      v-for="parameter in filterParameters('select', showAdvancedParameters)"
+      v-for="parameter in filterParameters('select')"
       :key="parameter.name"
       :name="parameter.name"
       :initial-value="parameter.value"
@@ -17,7 +17,7 @@
     />
 
     <SliderParameter
-      v-for="parameter in filterParameters('slider', showAdvancedParameters)"
+      v-for="parameter in filterParameters('slider')"
       :key="parameter.name"
       :name="parameter.name"
       :initial-value="parameter.value"
@@ -57,7 +57,7 @@
         Apply Changes
       </button>
     </div>
-    <button @click="toggleShowAdvancedParameters">
+    <button id="show-advanced-parameters-button" @click="toggleShowAdvancedParameters">
       {{ showAdvancedParameters ? 'Hide' : 'Show' }} Advanced Parameters
     </button>
   </div>
@@ -109,8 +109,8 @@ export default {
   },
   computed: {},
   methods: {
-    filterParameters(type, isAdvanced) {
-      if (isAdvanced) {
+    filterParameters(type) {
+      if (this.showAdvancedParameters) {
         return this.parameters.filter((parameter) => parameter.type === type)
       } else
         return this.parameters.filter((parameter) => parameter.type === type && !parameter.advanced)
@@ -124,18 +124,15 @@ export default {
         width: this.newMapDimensions.width,
         height: this.newMapDimensions.height
       })
-    }, //TODO: consider removing, duplicate?
-    emitNoiseParams(updatedParameter) {
-      this.$emit('updateNoiseParamsEvent', updatedParameter)
     },
     emitPreset(value) {
       this.$emit('emitPreset', value)
     },
     emitParameterValue(updatedParameter) {
-      this.emitNoiseParams(updatedParameter)
+      this.$emit('updateParamValueEvent', updatedParameter)
     }
   },
-  emits: ['updateNoiseParamsEvent', 'updateMapDimensionsEvent', 'emitPreset']
+  emits: ['updateParamValueEvent', 'updateMapDimensionsEvent', 'emitPreset']
 }
 </script>
 
@@ -158,5 +155,9 @@ export default {
   flex-wrap: wrap;
   align-content: center;
   gap: 16px;
+}
+
+#show-advanced-parameters-button {
+  font-size: 16px;
 }
 </style>
