@@ -28,31 +28,35 @@
     />
 
     <div class="map-dimensions-container">
-      <label for="map-width-input">Map width:</label>
-      <input
-        v-model.number="newMapDimensions.width"
-        @input="
-          () => {
-            newMapDimensions.changed = true
-          }
-        "
-        id="map-width-input"
-        size="10"
-        inputmode="numeric"
-      />
+      <div>
+        <label for="map-width-input">Map width:</label>
+        <input
+          v-model.number="newMapDimensions.width"
+          @input="
+            () => {
+              newMapDimensions.changed = true
+            }
+          "
+          id="map-width-input"
+          size="10"
+          inputmode="numeric"
+        />
+      </div>
 
-      <label for="map-height-input">Map height:</label>
-      <input
-        v-model.number="newMapDimensions.height"
-        @input="
-          () => {
-            newMapDimensions.changed = true
-          }
-        "
-        id="map-height-input"
-        size="10"
-        inputmode="numeric"
-      />
+      <div>
+        <label for="map-height-input">Map height:</label>
+        <input
+          v-model.number="newMapDimensions.height"
+          @input="
+            () => {
+              newMapDimensions.changed = true
+            }
+          "
+          id="map-height-input"
+          size="10"
+          inputmode="numeric"
+        />
+      </div>
       <button :disabled="!newMapDimensions.changed" @click="emitMapDimensionsAndToggleChanged">
         Apply Changes
       </button>
