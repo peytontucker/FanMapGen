@@ -1,14 +1,14 @@
 <template>
   <div class="container">
     <NumericParameter
-      v-for="parameter in numericParameters"
+      v-for="parameter in filterParameters('numeric', showAdvancedParameters)"
       :key="parameter.name"
       :name="parameter.name"
       :initial-value="parameter.value"
       @emit-parameter-value="emitParameterValue"
     />
     <SelectParameter
-      v-for="parameter in selectParameters"
+      v-for="parameter in filterParameters('select', showAdvancedParameters)"
       :key="parameter.name"
       :name="parameter.name"
       :initial-value="parameter.value"
@@ -17,7 +17,7 @@
     />
 
     <SliderParameter
-      v-for="parameter in sliderParameters"
+      v-for="parameter in filterParameters('slider', showAdvancedParameters)"
       :key="parameter.name"
       :name="parameter.name"
       :initial-value="parameter.value"
@@ -57,6 +57,9 @@
         Apply Changes
       </button>
     </div>
+    <button @click="toggleShowAdvancedParameters">
+      {{ showAdvancedParameters ? 'Hide' : 'Show' }} Advanced Parameters
+    </button>
   </div>
 </template>
 
@@ -75,6 +78,7 @@ export default {
   },
   data() {
     return {
+      showAdvancedParameters: false,
       newMapDimensions: { width: 600, height: 600, changed: false },
 
       parameters: [
@@ -89,31 +93,38 @@ export default {
           }))
         },
         { name: 'Scale', type: 'slider', value: 100, min: 1, max: 200 },
-        { name: 'Octaves', type: 'slider', value: 4, min: 1, max: 10 },
-        { name: 'Persistance', type: 'slider', value: 0.5, min: 0, max: 1, step: 0.01 },
-        { name: 'Lacunarity', type: 'slider', value: 2, min: 1, max: 5, step: 0.1 }
+        { name: 'Octaves', type: 'slider', value: 4, min: 1, max: 10, advanced: true },
+        {
+          name: 'Persistance',
+          type: 'slider',
+          value: 0.5,
+          min: 0,
+          max: 1,
+          step: 0.01,
+          advanced: true
+        },
+        { name: 'Lacunarity', type: 'slider', value: 2, min: 1, max: 5, step: 0.1, advanced: true }
       ]
     }
   },
-  computed: {
-    sliderParameters() {
-      return this.parameters.filter((parameter) => parameter.type === 'slider')
-    },
-    numericParameters() {
-      return this.parameters.filter((parameter) => parameter.type === 'numeric')
-    },
-    selectParameters() {
-      return this.parameters.filter((parameter) => parameter.type === 'select')
-    }
-  },
+  computed: {},
   methods: {
+    filterParameters(type, isAdvanced) {
+      if (isAdvanced) {
+        return this.parameters.filter((parameter) => parameter.type === type)
+      } else
+        return this.parameters.filter((parameter) => parameter.type === type && !parameter.advanced)
+    },
+    toggleShowAdvancedParameters() {
+      this.showAdvancedParameters = !this.showAdvancedParameters
+    },
     emitMapDimensionsAndToggleChanged() {
       this.newMapDimensions.changed = false
       this.$emit('updateMapDimensionsEvent', {
         width: this.newMapDimensions.width,
         height: this.newMapDimensions.height
       })
-    },
+    }, //TODO: consider removing, duplicate?
     emitNoiseParams(updatedParameter) {
       this.$emit('updateNoiseParamsEvent', updatedParameter)
     },

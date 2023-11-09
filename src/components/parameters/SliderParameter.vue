@@ -15,7 +15,7 @@
       :id="'perlin-noise-' + name.toLowerCase()"
       size="10"
       inputmode="numeric"
-      @input="emitNoiseParams"
+      @input="emitParamValue"
     />
   </div>
 </template>

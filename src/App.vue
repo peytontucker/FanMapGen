@@ -25,12 +25,12 @@
         ></canvas>
         <div class="scroll-container">
           <div class="scroll-buttons-container">
-            <button @click="() => changeVerticalOffset(-1)">Up</button>
+            <button @click="() => changeVerticalOffset(-1.0)">Up</button>
             <div>
-              <button @click="() => changeHorizontalOffset(-1)">Left</button>
-              <button @click="() => changeHorizontalOffset(1)">Right</button>
+              <button @click="() => changeHorizontalOffset(-1.0)">Left</button>
+              <button @click="() => changeHorizontalOffset(1.0)">Right</button>
             </div>
-            <button @click="() => changeVerticalOffset(1)">Down</button>
+            <button @click="() => changeVerticalOffset(1.0)">Down</button>
           </div>
           <SliderParameter
             name="Scroll Amount"
@@ -68,9 +68,9 @@ export default {
         preset: PRESETS.STANDARD
       },
 
-      offsetX: 0,
-      offsetY: 0,
-      offsetStep: 1
+      offsetX: parseFloat(0.0),
+      offsetY: parseFloat(0.0),
+      offsetStep: parseFloat(1.0)
     }
   },
   components: {
@@ -113,11 +113,12 @@ export default {
     },
 
     changeHorizontalOffset(directionValue) {
-      this.offsetX += directionValue * this.offsetStep
+      this.offsetX += parseFloat(directionValue * this.offsetStep)
+      console.log(this.offsetX)
       this.generateColorMap()
     },
     changeVerticalOffset(directionValue) {
-      this.offsetY += directionValue * this.offsetStep
+      this.offsetY += parseFloat(directionValue * this.offsetStep)
       this.generateColorMap()
     },
     populateDataUrl() {
