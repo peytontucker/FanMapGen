@@ -5,7 +5,11 @@
       v-model.number="value"
       :id="'perlin-noise-' + name.toLowerCase()"
       size="10"
+      :min="min"
+      :max="max"
+      :step="step || 1"
       inputmode="numeric"
+      type="number"
       @input="emitParamValue"
     />
   </div>
@@ -16,7 +20,10 @@ export default {
   name: 'NumericParameter',
   props: {
     name: String,
-    initialValue: Number
+    initialValue: Number,
+    min: Number,
+    max: Number,
+    step: Number
   },
   data() {
     return {

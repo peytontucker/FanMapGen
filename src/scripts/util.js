@@ -1,6 +1,10 @@
 /* eslint-disable no-unused-vars */
 import { perlin2, seed } from './perlin.js'
 
+let max = -Infinity
+let min = Infinity
+let currentSeed
+
 //Random Noise code from Don Park via https://gist.github.com/donpark/1796361
 export function drawRandomNoise(canvas, xOrigin, yOrigin, width, height, alpha) {
   xOrigin = xOrigin || 0
@@ -48,6 +52,12 @@ export function createNoiseMap(
   //apply the given seed to the seed function
   seed(seedValue)
 
+  if (currentSeed !== seedValue) {
+    max = -Infinity
+    min = Infinity
+    currentSeed = seedValue
+  }
+
   //generate noise map
   for (let y = 0; y < mapHeight; y++) {
     for (let x = 0; x < mapWidth; x++) {
@@ -58,8 +68,8 @@ export function createNoiseMap(
       //for each octave, generate a perlin noise value and add it to total
       //noiseHeight at that point
       for (let i = 0; i < octaves; i++) {
-        const sampleX = ((x - mapWidth / 2 + offsetX) / scale) * frequency
-        const sampleY = ((y - mapHeight / 2 + offsetY) / scale) * frequency
+        const sampleX = ((x - mapWidth / 2) / scale + offsetX) * frequency
+        const sampleY = ((y - mapHeight / 2) / scale + offsetY) * frequency
 
         const perlinValue = perlin2(sampleX, sampleY)
         noiseHeight += perlinValue * amplitude
@@ -72,23 +82,25 @@ export function createNoiseMap(
   }
 
   //find max and min values in noise map
-  let min = Infinity
-  let max = -Infinity
 
-  for (let y = 0; y < mapHeight; y++) {
-    for (let x = 0; x < mapWidth; x++) {
-      const val = noiseMap[x][y]
-      if (val < min) {
-        min = val
-      }
-      if (val > max) {
-        max = val
+  if (max === -Infinity && min === Infinity) {
+    for (let y = 0; y < mapHeight; y++) {
+      for (let x = 0; x < mapWidth; x++) {
+        const val = noiseMap[x][y]
+        if (val < min) {
+          min = val
+        }
+        if (val > max) {
+          max = val
+        }
       }
     }
   }
 
+  console.log(`min: ${min}, max: ${max}`)
+
   //normalize values in map to be between 0 and 1.
-  return noiseMap.map((row) => row.map((val) => (val - min) / (max - min)))
+  return noiseMap.map((row) => row.map((val) => invlerp(min, max, val)))
 }
 
 export function drawPerlinNoise(canvas, noiseMap) {
@@ -137,3 +149,7 @@ export function drawColorMap(canvas, noiseMap, terrainColorMap) {
 
   canvasContext.putImageData(image, 0, 0)
 }
+
+//Two functions from Trys Mudford
+const clamp = (a, min = 0, max = 1) => Math.min(max, Math.max(min, a))
+const invlerp = (x, y, a) => clamp((a - x) / (y - x))

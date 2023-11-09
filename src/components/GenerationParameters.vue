@@ -9,6 +9,7 @@
     />
     <SelectParameter
       v-for="parameter in filterParameters('select')"
+      :class="parameter.advanced ? 'advanced-feature' : ''"
       :key="parameter.name"
       :name="parameter.name"
       :initial-value="parameter.value"
@@ -61,9 +62,6 @@
         Apply Changes
       </button>
     </div>
-    <button id="show-advanced-parameters-button" @click="toggleShowAdvancedParameters">
-      {{ showAdvancedParameters ? 'Hide' : 'Show' }} Advanced Parameters
-    </button>
   </div>
 </template>
 
@@ -80,9 +78,11 @@ export default {
     NumericParameter,
     SelectParameter
   },
+  props: {
+    showAdvancedFeatures: Boolean
+  },
   data() {
     return {
-      showAdvancedParameters: false,
       newMapDimensions: { width: 600, height: 600, changed: false },
 
       parameters: [
@@ -114,13 +114,10 @@ export default {
   computed: {},
   methods: {
     filterParameters(type) {
-      if (this.showAdvancedParameters) {
+      if (this.showAdvancedFeatures) {
         return this.parameters.filter((parameter) => parameter.type === type)
       } else
         return this.parameters.filter((parameter) => parameter.type === type && !parameter.advanced)
-    },
-    toggleShowAdvancedParameters() {
-      this.showAdvancedParameters = !this.showAdvancedParameters
     },
     emitMapDimensionsAndToggleChanged() {
       this.newMapDimensions.changed = false

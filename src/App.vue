@@ -6,11 +6,15 @@
     <div class="content-container">
       <div class="generation-ui-container">
         <GenerationParameters
-          @updateParamValueEvent="updateNoiseParams"
+          :showAdvancedFeatures="showAdvancedFeatures"
+          @updateParamValueEvent="updateParamValue"
           @updateMapDimensionsEvent="updateMapDimensions"
           @emitPreset="updatePreset"
         />
-        <button @click="generatePerlinNoise">Generate Perlin Noise</button>
+        <button id="show-advanced-parameters-button" @click="toggleShowAdvancedFeatures">
+          {{ showAdvancedParameters ? 'Hide' : 'Show' }} Advanced Features
+        </button>
+        <button class="advanced-feature" @click="generatePerlinNoise">Generate Perlin Noise</button>
         <button @click="generateColorMap">Generate Color Map</button>
         <a :href="dataUrl" download="map">
           <button :disabled="!dataUrl">Download</button>
@@ -25,19 +29,18 @@
         ></canvas>
         <div class="scroll-container">
           <div class="scroll-buttons-container">
-            <button @click="() => changeVerticalOffset(-1.0)">▲</button>
+            <button :disabled="!dataUrl" @click="() => changeVerticalOffset(-1)">▲</button>
             <div>
-              <button @click="() => changeHorizontalOffset(-1.0)">◀</button>
-              <button @click="() => changeHorizontalOffset(1.0)">▶</button>
+              <button :disabled="!dataUrl" @click="() => changeHorizontalOffset(-1)">◀</button>
+              <button :disabled="!dataUrl" @click="() => changeHorizontalOffset(1)">▶</button>
             </div>
-            <button @click="() => changeVerticalOffset(1.0)">▼</button>
+            <button :disabled="!dataUrl" @click="() => changeVerticalOffset(1)">▼</button>
           </div>
-          <SliderParameter
-            name="Scroll Amount"
-            :initialValue="1"
-            :min="1"
-            :max="50"
-            @emitParameterValue="(newStep) => (offsetStep = newStep.value)"
+          <NumericParameter
+            name="Scroll Multiplier"
+            :initialValue="scrollMultiplier"
+            :min="0"
+            @emitParameterValue="(newValue) => (scrollMultiplier = newValue.value)"
           />
         </div>
       </div>
@@ -50,7 +53,7 @@
 import { createNoiseMap, drawPerlinNoise, drawColorMap } from '@/scripts/util.js'
 import { PRESETS } from './constants/terrainColorPresets'
 import GenerationParameters from './components/GenerationParameters.vue'
-import SliderParameter from './components/parameters/SliderParameter.vue'
+import NumericParameter from './components/parameters/NumericParameter.vue'
 
 export default {
   data() {
@@ -70,12 +73,14 @@ export default {
 
       offsetX: parseFloat(0.0),
       offsetY: parseFloat(0.0),
-      offsetStep: parseFloat(1.0)
+      offsetStep: 0.1,
+      scrollMultiplier: 1,
+      showAdvancedFeatures: false
     }
   },
   components: {
     GenerationParameters,
-    SliderParameter
+    NumericParameter
   },
   mounted() {
     this.canvasRef = this.$refs.canvasRef
@@ -113,18 +118,17 @@ export default {
     },
 
     changeHorizontalOffset(directionValue) {
-      this.offsetX += parseFloat(directionValue * this.offsetStep)
-      console.log(this.offsetX)
+      this.offsetX += directionValue * this.offsetStep * this.scrollMultiplier
       this.generateColorMap()
     },
     changeVerticalOffset(directionValue) {
-      this.offsetY += parseFloat(directionValue * this.offsetStep)
+      this.offsetY += directionValue * this.offsetStep * this.scrollMultiplier
       this.generateColorMap()
     },
     populateDataUrl() {
       this.dataUrl = this.canvasRef.toDataURL('image/png', 1)
     },
-    updateNoiseParams(updatedParameter) {
+    updateParamValue(updatedParameter) {
       this.generationParameters[updatedParameter.name.toLowerCase()] = updatedParameter.value
     },
     updateMapDimensions({ width, height }) {
@@ -132,6 +136,14 @@ export default {
     },
     updatePreset(preset) {
       this.generationParameters.preset = { ...preset }
+    },
+    toggleShowAdvancedFeatures() {
+      this.showAdvancedFeatures = !this.showAdvancedFeatures
+    }
+  },
+  computed: {
+    advancedFeatureVisibility() {
+      return this.showAdvancedFeatures ? 'visible' : 'hidden'
     }
   }
 }
@@ -233,5 +245,9 @@ button:disabled {
 
 .footer {
   background-color: slategray;
+}
+
+.advanced-feature {
+  visibility: v-bind(advancedFeatureVisibility);
 }
 </style>
