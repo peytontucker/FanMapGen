@@ -71,8 +71,8 @@ export default {
         preset: PRESETS.STANDARD
       },
 
-      offsetX: parseFloat(0.0),
-      offsetY: parseFloat(0.0),
+      offsetX: 0,
+      offsetY: 0,
       offsetStep: 0.1,
       scrollMultiplier: 1,
       showAdvancedFeatures: false

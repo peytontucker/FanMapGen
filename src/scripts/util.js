@@ -97,8 +97,6 @@ export function createNoiseMap(
     }
   }
 
-  console.log(`min: ${min}, max: ${max}`)
-
   //normalize values in map to be between 0 and 1.
   return noiseMap.map((row) => row.map((val) => invlerp(min, max, val)))
 }
@@ -150,6 +148,6 @@ export function drawColorMap(canvas, noiseMap, terrainColorMap) {
   canvasContext.putImageData(image, 0, 0)
 }
 
-//Two functions from Trys Mudford
-const clamp = (a, min = 0, max = 1) => Math.min(max, Math.max(min, a))
+//Clamp and lerp functions from Trys Mudford
+export const clamp = (a, min = 0, max = 1) => Math.min(max, Math.max(min, a))
 const invlerp = (x, y, a) => clamp((a - x) / (y - x))

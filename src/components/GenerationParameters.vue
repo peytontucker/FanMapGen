@@ -5,6 +5,8 @@
       :key="parameter.name"
       :name="parameter.name"
       :initial-value="parameter.value"
+      :min="parameter.min"
+      :max="parameter.max"
       @emit-parameter-value="emitParameterValue"
     />
     <SelectParameter
@@ -29,35 +31,23 @@
     />
 
     <div class="map-dimensions-container">
-      <div>
-        <label for="map-width-input">Map width:</label>
-        <input
-          v-model.number="newMapDimensions.width"
-          @input="
-            () => {
-              newMapDimensions.changed = true
-            }
-          "
-          id="map-width-input"
-          size="10"
-          inputmode="numeric"
-        />
-      </div>
+      <NumericParameter
+        name="Map width"
+        :initialValue="newMapDimensions.height"
+        :min="50"
+        :max="3840"
+        @emitParameterValue="(newValue) => (this.newMapDimensions.width = newValue.value)"
+        @input-detected="() => (this.newMapDimensions.changed = true)"
+      />
 
-      <div>
-        <label for="map-height-input">Map height:</label>
-        <input
-          v-model.number="newMapDimensions.height"
-          @input="
-            () => {
-              newMapDimensions.changed = true
-            }
-          "
-          id="map-height-input"
-          size="10"
-          inputmode="numeric"
-        />
-      </div>
+      <NumericParameter
+        name="Map height"
+        :initialValue="newMapDimensions.height"
+        :min="50"
+        :max="2160"
+        @emitParameterValue="(newValue) => (this.newMapDimensions.height = newValue.value)"
+        @input-detected="() => (this.newMapDimensions.changed = true)"
+      />
       <button :disabled="!newMapDimensions.changed" @click="emitMapDimensionsAndToggleChanged">
         Apply Changes
       </button>
@@ -86,7 +76,7 @@ export default {
       newMapDimensions: { width: 600, height: 600, changed: false },
 
       parameters: [
-        { name: 'Seed', type: 'numeric', value: 17345 },
+        { name: 'Seed', type: 'numeric', value: 17345, min: 0, max: 65535 },
         {
           name: 'Preset',
           type: 'select',

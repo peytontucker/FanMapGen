@@ -10,19 +10,33 @@
       :step="step || 1"
       inputmode="numeric"
       type="number"
-      @input="emitParamValue"
+      @input="emitInputDetected"
+      @change="
+        () => {
+          clampInput()
+          emitParamValue()
+        }
+      "
     />
   </div>
 </template>
 
 <script>
+import { clamp } from '@/scripts/util.js'
+
 export default {
   name: 'NumericParameter',
   props: {
     name: String,
     initialValue: Number,
-    min: Number,
-    max: Number,
+    min: {
+      type: Number,
+      default: -Infinity
+    },
+    max: {
+      type: Number,
+      default: Infinity
+    },
     step: Number
   },
   data() {
@@ -30,10 +44,16 @@ export default {
       value: this.initialValue
     }
   },
-  emits: ['emitParameterValue'],
+  emits: ['emitParameterValue', 'valueChanged'],
   methods: {
+    clampInput() {
+      this.value = clamp(this.value, this.min, this.max)
+    },
     emitParamValue() {
       this.$emit('emitParameterValue', { name: this.name, value: this.value })
+    },
+    emitInputDetected() {
+      this.$emit('inputDetected')
     }
   }
 }
