@@ -12,7 +12,7 @@
           @emitPreset="updatePreset"
         />
         <button id="show-advanced-parameters-button" @click="toggleShowAdvancedFeatures">
-          {{ showAdvancedParameters ? 'Hide' : 'Show' }} Advanced Features
+          {{ showAdvancedFeatures ? 'Hide' : 'Show' }} Advanced Features
         </button>
         <button class="advanced-feature" @click="generatePerlinNoise">Generate Perlin Noise</button>
         <button @click="generateColorMap">Generate Color Map</button>

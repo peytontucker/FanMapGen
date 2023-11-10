@@ -24,8 +24,10 @@
       :key="parameter.name"
       :name="parameter.name"
       :initial-value="parameter.value"
-      :min="parameter.min"
-      :max="parameter.max"
+      :sliderMin="parameter.sliderMin"
+      :sliderMax="parameter.sliderMax"
+      :numeric-min="parameter.numericMin || parameter.sliderMin"
+      :numeric-max="parameter.numericMax || parameter.sliderMax"
       :step="parameter.step"
       @emit-parameter-value="emitParameterValue"
     />
@@ -86,18 +88,43 @@ export default {
             value: PRESETS[preset]
           }))
         },
-        { name: 'Scale', type: 'slider', value: 100, min: 1, max: 200 },
-        { name: 'Octaves', type: 'slider', value: 4, min: 1, max: 10, advanced: true },
+        {
+          name: 'Scale',
+          type: 'slider',
+          value: 100,
+          slidersliderMin: 1,
+          sliderMax: 200,
+          numericMin: 0.001,
+          numericMax: Infinity
+        },
+        {
+          name: 'Octaves',
+          type: 'slider',
+          value: 4,
+          sliderMin: 1,
+          sliderMax: 10,
+          numericMax: 20,
+          advanced: true
+        },
         {
           name: 'Persistance',
           type: 'slider',
           value: 0.5,
-          min: 0,
-          max: 1,
+          sliderMin: 0,
+          sliderMax: 1,
           step: 0.01,
           advanced: true
         },
-        { name: 'Lacunarity', type: 'slider', value: 2, min: 1, max: 5, step: 0.1, advanced: true }
+        {
+          name: 'Lacunarity',
+          type: 'slider',
+          value: 2,
+          sliderMin: 1,
+          sliderMax: 5,
+          numericMax: Infinity,
+          step: 0.1,
+          advanced: true
+        }
       ]
     }
   },

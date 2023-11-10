@@ -4,30 +4,53 @@
     <input
       @input="emitParamValue"
       type="range"
-      :min="min"
-      :max="max"
-      :step="step || 1"
+      :min="sliderMin"
+      :max="sliderMax"
+      :step="step"
       v-model.number="value"
       class="slider"
     />
     <input
       v-model.number="value"
       :id="'perlin-noise-' + name.toLowerCase()"
+      :min="numericMin"
+      :max="numericMax"
       size="10"
       inputmode="numeric"
-      @input="emitParamValue"
+      @change="
+        () => {
+          clampInput()
+          emitParamValue()
+        }
+      "
     />
   </div>
 </template>
 
 <script>
+import { clamp } from '../../scripts/util'
+
 export default {
   name: 'SliderParameter',
   props: {
-    name: String,
-    initialValue: Number,
-    min: Number,
-    max: Number,
+    name: {
+      type: String,
+      required: true
+    },
+    initialValue: {
+      type: Number,
+      required: true
+    },
+    sliderMin: {
+      type: Number,
+      required: true
+    },
+    sliderMax: {
+      type: Number,
+      required: true
+    },
+    numericMin: Number,
+    numericMax: Number,
     step: Number
   },
   data() {
@@ -37,6 +60,9 @@ export default {
   },
   emits: ['emitParameterValue'],
   methods: {
+    clampInput() {
+      this.value = clamp(this.value, this.numericMin, this.numericMax)
+    },
     emitParamValue() {
       this.$emit('emitParameterValue', { name: this.name, value: this.value })
     }
