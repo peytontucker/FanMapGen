@@ -8,3 +8,5 @@ Choose between different presets to fit your needs, or create your own with the
 custom preset editor.
 
 Built entirely in Vue with usage of perlin noise and HTML's canvas element.
+
+Hosted at mapgen.xyz.
